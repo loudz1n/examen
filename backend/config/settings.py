@@ -1,13 +1,15 @@
-from pathlib import Path
 import os
+from pathlib import Path
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-SECRET_KEY = 'django-insecure-tienda-calzado-secret-key-2024'
+# En producción, obtén la secret key desde una variable de entorno
+SECRET_KEY = os.environ.get('SECRET_KEY', 'django-insecure-tienda-calzado-secret-key-2024')
 
-DEBUG = True
+# DEBUG debe ser False en producción
+DEBUG = os.environ.get('DEBUG', 'False') == 'True'
 
-ALLOWED_HOSTS = ['*']
+ALLOWED_HOSTS = ['tu-app-en-render.onrender.com', 'localhost', '127.0.0.1']
 
 INSTALLED_APPS = [
     'django.contrib.admin',
@@ -22,8 +24,9 @@ INSTALLED_APPS = [
 ]
 
 MIDDLEWARE = [
-    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.security.SecurityMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware', # Vital para archivos estáticos
+    'corsheaders.middleware.CorsMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -71,13 +74,23 @@ TIME_ZONE = 'America/Lima'
 USE_I18N = True
 USE_TZ = True
 
+# Configuración de estáticos para producción
 STATIC_URL = 'static/'
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+
+# Configuración de Media
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-CORS_ALLOW_ALL_ORIGINS = True
+# CORS - Cambia esto después de desplegar el frontend
+CORS_ALLOWED_ORIGINS = [
+    "https://tu-frontend-en-vercel.app", 
+    "http://localhost:5173",
+]
+CORS_ALLOW_ALL_ORIGINS = False 
 
 REST_FRAMEWORK = {
     'DEFAULT_RENDERER_CLASSES': [
