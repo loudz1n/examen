@@ -1,6 +1,7 @@
 import axios from 'axios'
 
-const BASE = 'http://127.0.0.1:8080'
+// URL actualizada a tu despliegue en PythonAnywhere
+const BASE = 'https://junior22333w.pythonanywhere.com'
 
 const api = axios.create({ baseURL: BASE })
 
